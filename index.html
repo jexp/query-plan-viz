@@ -3,22 +3,41 @@
 <head>
   <script src="textMeasurement.js"></script>
   <script src="queryPlan.js"></script>
-  <script src="example_plans.js"></script>
+  <!--script src="example_plans.js"></script-->
   <script src="d3.v3.min.js"></script>
   <script src="colorbrewer.js"></script>
 </head>
+<link rel="stylesheet" href="codemirror.css">
+<script src="codemirror.js"></script>
 <body>
-<div id="examples"></div>
-<script lang="javascript">
-  d3.select("#examples").selectAll('svg.query-plan')
-      .data(d3.values(example_plans))
-      .enter().append('svg')
-      .attr('class', 'query-plan')
-      .each(function(query) {
-        if (query && query.plan) {
-         neo.queryPlan(this).display(query.plan);
-        }
-      });
-</script>
+	<script lang="javascript">
+	  function render() {
+	  var plan=[{plan:JSON.parse(d3.select("#json").text()).table._response.plan}];
+	  console.log(plan)
+	  d3.select("#examples").selectAll('svg.query-plan')
+	      .data(plan)
+	      .enter().append('svg')
+	      .attr('class', 'query-plan')
+	      .each(function(query) {
+	        if (query && query.plan) {
+	         neo.queryPlan(this).display(query.plan);
+	        }
+	      });
+	   }
+	</script>
+
+<button onclick="render();">Render</button>
+<br/>
+<textarea id="json" rows="30" cols="120" data-lang="javascript" style="width:50%">
+{"table":{"_response":{"columns":["This","To","That"],"data":[{"row":["Person","ACTED_IN","Movie"],"graph":{"nodes":[],"relationships":[]}},{"row":["Person","DIRECTED","Movie"],"graph":{"nodes":[],"relationships":[]}},{"row":["Person","PRODUCED","Movie"],"graph":{"nodes":[],"relationships":[]}},{"row":["Person","WROTE","Movie"],"graph":{"nodes":[],"relationships":[]}},{"row":["Person","REVIEWED","Movie"],"graph":{"nodes":[],"relationships":[]}},{"row":["Person","FOLLOWS","Person"],"graph":{"nodes":[],"relationships":[]}}],"stats":{"contains_updates":false,"nodes_created":0,"nodes_deleted":0,"properties_set":0,"relationships_created":0,"relationship_deleted":0,"labels_added":0,"labels_removed":0,"indexes_added":0,"indexes_removed":0,"constraints_added":0,"constraints_removed":0},"plan":{"root":{"operatorType":"Limit","DbHits":0,"Rows":6,"version":"CYPHER 2.2","LegacyExpression":"{  AUTOINT0}","EstimatedRows":237,"planner":"COST","identifiers":["That","This","To"],"children":[{"operatorType":"Distinct","KeyNames":"This, To, That","Rows":6,"DbHits":1000,"EstimatedRows":237,"identifiers":["That","This","To"],"children":[{"operatorType":"Expand(All)","ExpandExpression":"(b)<-[r:]-(a)","Rows":250,"DbHits":419,"EstimatedRows":250,"identifiers":["a","b","r"],"children":[{"operatorType":"AllNodesScan","Rows":169,"DbHits":170,"EstimatedRows":169,"identifiers":["b"],"children":[]}]}]}]}}},"nodes":[],"other":[],"relationships":[],"size":6,"displayedSize":6,"stats":{"contains_updates":false,"nodes_created":0,"nodes_deleted":0,"properties_set":0,"relationships_created":0,"relationship_deleted":0,"labels_added":0,"labels_removed":0,"indexes_added":0,"indexes_removed":0,"constraints_added":0,"constraints_removed":0}},"graph":{"nodeMap":{},"_nodes":[],"relationshipMap":{},"_relationships":[]}}
+</textarea>
+
+<div style="float:right;" id="examples"></div>
 </body>
+<script>
+  var textArea=document.getElementById("json")
+  var editor = CodeMirror.fromTextArea(textArea, {
+    lineNumbers: true, width: "50%",lineWrapping: true, lang:"javascript"
+  });
+</script>
 </html>
