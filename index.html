@@ -12,7 +12,7 @@
 <body>
 	<script lang="javascript">
 	  function render() {
-	  var plan=[{plan:JSON.parse(d3.select("#json").text()).table._response.plan}];
+	  var plan=[{plan:JSON.parse(document.getElementById("json").value).table._response.plan}];
 	  console.log(plan)
 	  d3.select("#examples").selectAll('svg.query-plan')
 	      .data(plan)
